@@ -1,32 +1,15 @@
 var mongoose =require('mongoose'),User = mongoose.model('User')
 
+var quotes = require('../controls/quotes.js');
 
 module.exports= function(app){
 
-
 app.post('/users',function(req,res){
-    console.log("POST DATA", req.body);
-    var user = new User({name:req.body.name,quote:req.body.quote});
-    user.save(function(err){
-        if(err){
-            console.log("flash Error")
-            for(var key in err.errors){
-                req.flash('registration', err.errors[key].message);
-            }
-            res.redirect('/');
-
-        }
-        else{
-            console.log("user added");
-            res.redirect('/');
-        }
-    })
+   quotes.newUser(req,res);
 
 })
 app.get('/',function(req,res){
-    
-   
-    res.render('index');
+  quotes.index(res,req)
 
 
 })
@@ -34,31 +17,11 @@ app.get('/',function(req,res){
 
 
 app.get('/remove',function(req,res){
-    User.remove({},function(err){
-        if(err){
-            console.log("removing err")
-            res.redirect('/');
-        }
-        else{
-            console.log("remove complete");
-            res.redirect('/');
-        }
-
-    });
+   quotes.removeAll(req,res);
 })
 
 app.get('/quote',function(req,res){
-    User.find({},function(err,quotes){
-        if(err){
-            console.log("Error in grabbing quotes")
-            res.redirect('/')
-        }
-        else{
-            quotes;
-            res.render('quotes',{quotes:quotes});
-        
-        }
-    });
+    quotes.displayQts(req,res);
 })
 
 }
